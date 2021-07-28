@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Bootstrap include -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- fontawsome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/v4-shims.css">
+
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
+</head>
+<body>
+    <div class="container">
+        <div class="col justify-content-md-center">
+            <!-- Asset Input -->
+            <br>
+            <div class="row-lg">
+                <h3>Input Asset</h3>
+                <div id="set-alert"></div>
+                <input type="text" id="setid" placeholder="Input Asset Id"><br>
+                <input type="text" id='setdata' placeholder="Input Asset Data"><br>
+                <button class="btn btn-primary" id="set-btn">Submit</button>
+            </div>
+            <!-- Asset Search -->
+            <br>
+            <div class="row-lg">
+                <h3>Search Asset</h3>
+                <div id="get-alert"></div>
+                <input type="text" id="getid" placeholder="Input Asset Id"><br>
+                <button class="btn btn-primary" id="get-btn">Submit</button>
+                <table class="table">
+                    <tbody id="table"></tbody>
+                </table>
+            </div>
+            <!-- All Asset Search -->
+            <br>
+            <div class="row-lg">
+                <h3>Search All Asset</h3>
+                <button class="btn btn-warning" id="getall-btn">Submit</button>
+                <div id="getall-alert"></div>
+            </div>
+            <!-- Asset History Search -->
+            <br>
+            <div class="row-lg">
+                <h3>Search History of Asset</h3>
+                <input type="text" id="gethid" placeholder="Input Asset Id"><br>
+                <button class="btn btn-warning" id="get-hbtn">Submit</button>
+                <div id="getH-alert"></div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    // set asset
+    $("#set-btn").click(() => {
+        const id = $("#setid").val();
+        const data = $("#setdata").val();
+
+        $.post('/set', { id: id, data: data }, (data, status) => {
+            if(status === "success") {
+                $("#set-alert").append("success!");
+                $("#set-alert").fadeOut(4000);
+            }
+        });
+    });
+
+    // search asset
+    $("#get-btn").click(() => {
+        const id = $("#getid").val();
+
+        $.get('/get', { id: id }, (data, status) => {
+            if(status != null) {
+                $("#get-alert").append("success!");
+                $("#get-alert").fadeOut(4000);
+                const parsedData = JSON.parse(data);
+
+                $('#table').empty();
+                $('#table').append("<tr><th scope='row'>ID</th><td>" + parsedData.key + "</td></tr>");
+                $('#table').append("<tr><th scope='row'>Avg</th><td>" + parsedData.value + "</td></tr>");
+            }
+        });
+    });
+
+    // search all asset
+    $("#getall-btn").click(() => {
+        $.get('/getAll', (data, status) => {
+            if(status === "success") {
+                $("#getall-alert").empty();
+                $("#getall-alert").append(data);
+            }
+        });
+    });
+
+    // search history asset
+    $("#get-hbtn").click(() => {
+        const id = $("#gethid").val();
+        $.get('/getHistory', { id: id }, (data, status) => {
+            if(status === "success") {
+                $("#getH-alert").empty();
+                $("#getH-alert").append(data);
+            }
+        });
+    });
+</script>
+</html>
